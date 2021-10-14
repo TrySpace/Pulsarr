@@ -458,7 +458,8 @@ class RadarrServer extends Server {
         $('#lstMinAvail').val(pulsarrConfig.radarr.preferences.minAvail);
     }
 
-    addMovie(movie, qualityId, monitored, minAvail, addSearch, folderPath) {
+  addMovie(movie, qualityId, monitored, minAvail, addSearch, folderPath) {
+        console.log('addMovie', movie)
         pulsarr.loading();
         var newMovie = {
             "title": movie.title,
@@ -772,7 +773,8 @@ class SonarrServer extends Server {
 
 function init() {
     pulsarr = new Pulsarr();
-    pulsarr.loading();
+  pulsarr.loading();
+  console.log('init()', pulsarr)
     if (localStorage.getItem("host")) {
         pulsarr.portConfigToV2();
     }
@@ -821,6 +823,7 @@ function init() {
 }
 
 function getCurrentTabUrl(callback) {
+  console.log('getCurrentTabUrl' )
     var queryInfo = {
         active: true,
         currentWindow: true
@@ -902,7 +905,10 @@ let loadFromTraktUrl = async (url) => {
 
 let loadFromRottenUrl = async (url) => {
 	var regextv = new RegExp("rottentomatoes.com\/tv\/");
-	var regexmov = new RegExp("rottentomatoes.com\/m\/");
+  var regexmov = new RegExp("rottentomatoes.com\/m\/");
+  console.log('loadFromRotten', url)
+  console.log('regextv.test(url)', regextv.test(url))
+  console.log('regexmov.test(url)', regexmov.test(url))
 	if (regextv.test(url)) {
 		try {
 			var title = url.split("/tv/")[1].split("/")[0].replace(/\_/g," ");
@@ -919,9 +925,12 @@ let loadFromRottenUrl = async (url) => {
 	} else if (regexmov.test(url)) {
 		try {
 			let result = await $.ajax({url: url, datatype: "xml"});
-			var title = $(result).find(".mop-ratings-wrap h1").text().trim();
+			var title = $(result).find(".panel-heading em").text().trim();
 			let imdbid = await pulsarr.ImdbidFromTitle(title,1);
-			let movie = await radarr.lookupMovie(imdbid);
+      let movie = await radarr.lookupMovie(imdbid);
+      console.log('$(result)', $(result))
+      console.log('$(result).find(".panel-heading em")', $(result).find(".panel-heading em"))
+      console.log('movie', title, imdbid, movie)
 			if (movie) {
 				pulsarr.info(movie);
 			}
@@ -1000,7 +1009,8 @@ jQuery.fn.changepanel = function(media) {
         if (media.images[i].coverType === "poster") {
             $('#image').attr("src", media.images[i].url);
         }
-    }
+  }
+  console.log('changePanel', media)
     $('#title').html(media.title + "<span> (" + media.year + ")</span>");
     $('#description').each(function() {
         var content = $(this).html(),
